@@ -1,14 +1,14 @@
 package leejayoung.submit12;
 
 public class Board {
-	int no = 0;
-	String title;
-	String day;
-	String content;
+	private int no = 0;
+	private String title;
+	private String day;
+	private String content;
 	
 	public Board() {}
 	public Board(int no, String title, String day, String content) {
-		this.no = no + 1;
+		this.no = no+1;
 		this.title = title;
 		this.day = day;
 		this.content = content;

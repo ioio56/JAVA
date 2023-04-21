@@ -13,6 +13,7 @@ public class BoardMain {
 		String day = format.format(date);
 		Board board = new Board();
 		BoardDB boardDB = new BoardDB();
+		
 		while (true) {
 			System.out.println("행동을 선택해주세요");
 			System.out.println("1. 글 목록 | 2. 글쓰기 | 3. 종료");
