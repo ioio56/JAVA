@@ -1,6 +1,7 @@
 package ch14_jdbc_jsp.dao;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,13 +26,14 @@ public class StudentDAO {
 	public ArrayList<StudentVO> getStuList(Connection conn) throws SQLException {
 		// 3. 쿼리문 작성
 		StringBuffer query = new StringBuffer();
-		query.append("SELECT						");
-		query.append("		stu_id				");
-		query.append("	, stu_password AS pw	");
-		query.append("	, stu_name				");
-		query.append("	, stu_score			");
-		query.append("FROM						");
-		query.append("	students				"); // 세미콜론이 없음에 주의
+		query.append("SELECT								");
+		query.append("		stu_id						");
+		query.append("	, stu_password AS pw			");
+		query.append("	, stu_name						");
+		query.append("	, stu_score					");
+		query.append("FROM								");
+		query.append("	students						"); // 세미콜론이 없음에 주의
+		query.append("	ORDER BY stu_score DESC		");
 
 		// 4. 쿼리문을 보유하고 실행 할 수 있는 객체 생성
 		// 객체 (PreparedStatement) 생성
@@ -92,11 +94,11 @@ public class StudentDAO {
 
 		int cnt = ps.executeUpdate();
 		ps.close();
-		
+
 		return cnt;
 
 	}
-	
+
 	// 로그인(SELECT) 메소드
 	// 입력받은 아이디와 비밀번호가 일치하는 하나의 데이터 리턴
 	public StudentVO login(Connection conn, StudentVO student) throws SQLException {
@@ -107,32 +109,50 @@ public class StudentDAO {
 		query.append("	, stu_name				");
 		query.append("	, stu_score			");
 		query.append("FROM						");
-		query.append("	students				"); 
-		query.append("WHERE 1=1					"); 
-		query.append("	AND stu_id =?			"); 
-		query.append("	AND stu_password =?	"); 
+		query.append("	students				");
+		query.append("WHERE 1=1					");
+		query.append("	AND stu_id =?			");
+		query.append("	AND stu_password =?	");
 
 		PreparedStatement ps = conn.prepareStatement(query.toString());
 		int idx = 1;
 		ps.setString(idx++, student.getStudId());
 		ps.setString(idx++, student.getStuPassword());
-		
+
 		ResultSet rs = ps.executeQuery();
-		
+
 		StudentVO result = new StudentVO();
 		// rs에 데이터가 1개 담여있으면 while 문 한번만 실행된다.
-		while(rs.next()) {
+		while (rs.next()) {
 			result.setStudId(rs.getString("stu_id"));
 			result.setStuPassword(rs.getString("pw"));
 			result.setStuName(rs.getString("stu_name"));
 			result.setStuScore(rs.getInt("stu_score"));
 		}
-		
+
 		rs.close();
 		ps.close();
-		
-		
+
 		return result;
 	}
-	
+
+	// 학생의 점스 증가(update) 메소드
+	public int PlusScore(Connection conn, String stuId) throws SQLException {
+		
+		StringBuffer query = new StringBuffer();
+		query.append("UPDATE 						");
+		query.append("		students 				");
+		query.append("SET 							");
+		query.append(" stu_score = stu_score + 1	");
+		query.append("WHERE 1=1						");
+		query.append("  AND stu_id = ?				");
+		PreparedStatement ps = conn.prepareStatement(query.toString());
+		
+		ps.setString(1, stuId);
+		
+		int cnt = ps.executeUpdate();
+		ps.close();
+		
+		return cnt;
+	}
 }
