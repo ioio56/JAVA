@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -54,9 +56,9 @@ public class BoardDAO {
 			String inner = rs.getString("board_inner"); // as로 컬럼명 수정시 컬럼명에 맞춰줘야한다.
 			String id = rs.getString("member_id");
 			Date date = rs.getDate("board_date");
-
 			BoardVO board = new BoardVO(nm, write, inner, id, date);
 			result.add(board);
+			
 		}
 		ps.close();
 		rs.close();

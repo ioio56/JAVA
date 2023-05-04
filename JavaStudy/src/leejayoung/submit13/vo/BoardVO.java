@@ -1,5 +1,7 @@
 package leejayoung.submit13.vo;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class BoardVO {
@@ -17,8 +19,18 @@ public class BoardVO {
 		this.write = write;
 		this.inner = inner;
 		this.id = id;
-		this.board_date = board_date;
+		SimpleDateFormat sDate2 = new SimpleDateFormat("yyyy.MM.dd");
+		String time = sDate2.format(board_date);
+		Date time_im;
+		try {
+			time_im = sDate2.parse(time);
+			this.board_date = time_im;
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}	
 	}
+
+
 	public BoardVO(String write, String inner, String memberId) {
 		this.write = write;
 		this.inner = inner;
