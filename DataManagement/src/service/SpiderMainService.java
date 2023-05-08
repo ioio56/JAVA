@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import context.ConnectionPool;
 import dao.SpiderMainDAO;
+import vo.MemberVO;
 import vo.SpiderMainVO;
 
 public class SpiderMainService {
@@ -41,7 +42,24 @@ public class SpiderMainService {
 
 		// 거미 객체 데이터 조회
 		for (int i = 0; i < spiderList.size(); i++) {
-			System.out.println(spiderList.get(i).getSpider_number());
+			System.out.println("객체 번호 : "+spiderList.get(i).getSpider_number() + " / "+ "채집 장소 : " + spiderList.get(i).getSpider_place()
+					+" / " + "채집 날짜 : " + spiderList.get(i).getSpider_date()+" / " + "관리자 : " + spiderList.get(i).getResponsibility());
 		}
+	}
+
+
+	public void mainAdd(SpiderMainVO main) {
+		Connection conn = cp.getConnection();
+
+		try {
+			dao.addMain(conn, main);
+			System.out.println("성공적으로 입력됐습니다.");
+		} catch (SQLException e) {
+			e.printStackTrace();
+
+		} finally {
+			cp.releaseConnection(conn);
+		}
+
 	}
 }

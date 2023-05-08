@@ -1,12 +1,14 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 
+
+import vo.SpiderDataVO;
 import vo.SpiderMainVO;
 
 public class SpiderMainDAO {
@@ -52,4 +54,38 @@ public class SpiderMainDAO {
 		rs.close();
 		return result;
 	}
+	
+	public int addMain(Connection conn, SpiderMainVO main) throws SQLException {
+
+		StringBuffer query = new StringBuffer();
+		query.append("INSERT INTO spider_main (	");
+		query.append("      spider_number				");
+		query.append("    , spider_name		");
+		query.append("    , spider_place			");
+		query.append("    , spider_date			");
+		query.append("    , responsibility			");
+		query.append(") VALUES (					");
+		query.append("      ?					");
+		query.append("    , ?					");
+		query.append("    , ?					");
+		query.append("    , ?					");
+		query.append("    , ?					");
+		query.append(")							");
+
+		PreparedStatement ps = conn.prepareStatement(query.toString());
+
+		int idx = 1;
+		ps.setString(idx++, main.getSpider_number());
+		ps.setString(idx++, main.getSpider_name());
+		ps.setString(idx++, main.getSpider_place());
+		ps.setDate(idx++,  main.getSpider_date());
+		ps.setString(idx++, main.getResponsibility());
+
+		int cnt = ps.executeUpdate();
+		ps.close();
+
+		return cnt;
+
+	}
+	
 }

@@ -1,11 +1,12 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
+
 
 import vo.SpiderDataVO;
 
@@ -79,7 +80,8 @@ public class SpiderDataDAO {
 		query.append("	, fulfill									");
 		query.append("	, etc										");
 		query.append("FROM (											");
-		query.append("	, spider_number							");
+		query.append("select spider_number								");
+		query.append(", RANK() OVER (ORDER BY record_date DESC) as RANK   		");
 		query.append("	, record_date								");
 		query.append("	, width_mm									");
 		query.append("	, length_mm								");
@@ -91,10 +93,11 @@ public class SpiderDataDAO {
 		query.append("	, etc										");
 		query.append("FROM 											");
 		query.append("	spider_data								");
+		query.append("WHERE spider_number = ?						");
 		query.append("	)											");
 		query.append("WHERE 1=1										");
 		query.append("AND rank = 1									");
-		query.append("AND spider_number = ?						");
+
 		
 		PreparedStatement ps = conn.prepareStatement(query.toString());
 		
@@ -122,6 +125,120 @@ public class SpiderDataDAO {
 		System.out.println();
 		return result;
 	}
+	
+	public ArrayList<SpiderDataVO> age(Connection conn) throws SQLException {
+		StringBuffer query = new StringBuffer();
+		query.append("SELECT										");
+		query.append("	avg(WIDTH_MM) as WIDTH_MM					");
+		query.append("	,avg(LENGTH_MM) as LENGTH_MM							");
+		query.append("	,avg(WEIGHT_MG) as WEIGHT_MG						");
+		query.append("	,age						");
+		query.append("from spider_data										");
+		query.append("group by age							"); // 세미콜론이 없음에 주의
+		
+		PreparedStatement ps = conn.prepareStatement(query.toString());
+	
+		ResultSet rs = ps.executeQuery();
+		ArrayList<SpiderDataVO> result = new ArrayList<>();
+		
+		while (rs.next()) {
+			// 쿼리문 실행 결과에 해당하는 컬럼명과 일치해야 함
+			double width_mm = rs.getDouble("width_mm");
+			double length_mm = rs.getDouble("length_mm");
+			double weight_mg = rs.getDouble("weight_mg");
+			int age = rs.getInt("age");
+
+			SpiderDataVO SpiderDateList = new SpiderDataVO(null, null, width_mm,length_mm,weight_mg,age, null, null, null, null);
+			result.add(SpiderDateList);
+
+		}
+		ps.close();
+		rs.close();
+		System.out.println();
+		return result;
+	}
+	
+	public ArrayList<SpiderDataVO> sex(Connection conn) throws SQLException {
+		StringBuffer query = new StringBuffer();
+		query.append("SELECT										");
+		query.append("	avg(WIDTH_MM) as WIDTH_MM					");
+		query.append("	,avg(LENGTH_MM) as LENGTH_MM							");
+		query.append("	,avg(WEIGHT_MG) as WEIGHT_MG						");
+		query.append("	,SPIDER_SEX						");
+		query.append("from spider_data										");
+		query.append("group by SPIDER_SEX							"); // 세미콜론이 없음에 주의
+		
+		PreparedStatement ps = conn.prepareStatement(query.toString());
+	
+		ResultSet rs = ps.executeQuery();
+		ArrayList<SpiderDataVO> result = new ArrayList<>();
+		
+		while (rs.next()) {
+			// 쿼리문 실행 결과에 해당하는 컬럼명과 일치해야 함
+			double width_mm = rs.getDouble("width_mm");
+			double length_mm = rs.getDouble("length_mm");
+			double weight_mg = rs.getDouble("weight_mg");
+			String sex = rs.getString("SPIDER_SEX");
+
+			SpiderDataVO SpiderDateList = new SpiderDataVO(null, null, width_mm,length_mm,weight_mg,0, null, sex, null, null);
+			result.add(SpiderDateList);
+
+		}
+		ps.close();
+		rs.close();
+		System.out.println();
+		return result;
+	}
+	
+	
+	public int addData(Connection conn, SpiderDataVO data) throws SQLException {
+
+		StringBuffer query = new StringBuffer();
+		query.append("INSERT INTO spider_data (	");
+		query.append("      spider_number				");
+		query.append("    , record_date		");
+		query.append("    , width_mm			");
+		query.append("    , length_mm			");
+		query.append("    , weight_mg			");
+		query.append("    , age			");
+		query.append("    , grow_level			");
+		query.append("    , spider_sex			");
+		query.append("    , fulfill			");
+		query.append("    , etc			");
+		query.append(") VALUES (					");
+		query.append("      ?					");
+		query.append("    , ?					");
+		query.append("    , ?					");
+		query.append("    , ?					");
+		query.append("    , ?					");
+		query.append("    , ?					");
+		query.append("    , ?					");
+		query.append("    , ?					");
+		query.append("    , ?					");
+		query.append("    , ?					");
+		query.append(")							");
+
+		PreparedStatement ps = conn.prepareStatement(query.toString());
+
+		int idx = 1;
+		ps.setString(idx++, data.getSpider_number());
+		ps.setDate(idx++, (java.sql.Date) data.getRecord_date());
+		ps.setDouble(idx++, data.getWidth_mm());
+		ps.setDouble(idx++, data.getLength_mm());
+		ps.setDouble(idx++, data.getWeight_mg());
+		ps.setDouble(idx++, data.getAge());
+		ps.setString(idx++, data.getGrow_level());
+		ps.setString(idx++, data.getSpider_sex());
+		ps.setString(idx++, data.getFulfill());
+		ps.setString(idx++, data.getEtc());
+
+		int cnt = ps.executeUpdate();
+		ps.close();
+
+		return cnt;
+
+	}
+	
 	
 	
 	
