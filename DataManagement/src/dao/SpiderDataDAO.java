@@ -65,7 +65,7 @@ public class SpiderDataDAO {
 		System.out.println();
 		return result;
 	}
-	public SpiderDataVO lastData(Connection conn ,SpiderDataVO date) throws SQLException {
+	public SpiderDataVO lastData(Connection conn ,String data) throws SQLException {
 		
 		StringBuffer query = new StringBuffer();
 		query.append("select 										");
@@ -101,7 +101,7 @@ public class SpiderDataDAO {
 		
 		PreparedStatement ps = conn.prepareStatement(query.toString());
 		
-		ps.setString(1, date.getSpider_number());
+		ps.setString(1, data);
 		
 		ResultSet rs = ps.executeQuery();
 		
@@ -129,9 +129,9 @@ public class SpiderDataDAO {
 	public ArrayList<SpiderDataVO> age(Connection conn) throws SQLException {
 		StringBuffer query = new StringBuffer();
 		query.append("SELECT										");
-		query.append("	avg(WIDTH_MM) as WIDTH_MM					");
-		query.append("	,avg(LENGTH_MM) as LENGTH_MM							");
-		query.append("	,avg(WEIGHT_MG) as WEIGHT_MG						");
+		query.append("	ROUND(avg(WIDTH_MM),2) as WIDTH_MM					");
+		query.append("	,ROUND(avg(LENGTH_MM),2) as LENGTH_MM							");
+		query.append("	,ROUND(avg(WEIGHT_MG),2) as WEIGHT_MG						");
 		query.append("	,age						");
 		query.append("from spider_data										");
 		query.append("group by age							"); // 세미콜론이 없음에 주의
@@ -160,13 +160,13 @@ public class SpiderDataDAO {
 	
 	public ArrayList<SpiderDataVO> sex(Connection conn) throws SQLException {
 		StringBuffer query = new StringBuffer();
-		query.append("SELECT										");
-		query.append("	avg(WIDTH_MM) as WIDTH_MM					");
-		query.append("	,avg(LENGTH_MM) as LENGTH_MM							");
-		query.append("	,avg(WEIGHT_MG) as WEIGHT_MG						");
-		query.append("	,SPIDER_SEX						");
+		query.append("SELECT													");
+		query.append("	ROUND(avg(WIDTH_MM),2) as width_mm				");
+		query.append("	,ROUND(avg(LENGTH_MM),2) as length_mm			");
+		query.append("	,ROUND(avg(WEIGHT_MG),2) as weight_mg			");
+		query.append("	,SPIDER_SEX										");
 		query.append("from spider_data										");
-		query.append("group by SPIDER_SEX							"); // 세미콜론이 없음에 주의
+		query.append("group by SPIDER_SEX									"); // 세미콜론이 없음에 주의
 		
 		PreparedStatement ps = conn.prepareStatement(query.toString());
 	

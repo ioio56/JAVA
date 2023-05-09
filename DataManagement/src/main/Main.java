@@ -25,14 +25,9 @@ public class Main {
 		outer: while (true) {
 			System.out.println(" 1. 로그인하기 | 2. 회원가입 | 3. 종료 ");
 			System.out.print(">>>");
-			int comm = 0;
-			try {
-				comm = Integer.parseInt(scan.nextLine());
-			} catch (NumberFormatException e) {
-				System.out.println("숫자만 입력해주세요");
+			String comm = scan.nextLine();
 
-			}
-			if (comm == 1) {
+			if (comm.equals("1")) {
 				// TODO 로그인하기
 				System.out.println("아이디를 입력하세요");
 				System.out.print(">>>");
@@ -55,59 +50,54 @@ public class Main {
 						System.out.println("1. 데이터 검색 | 2. 데이터 추가 | 3. 전체 데이터 확인 | 4. 종료 ");
 						System.out.print(">>>");
 
-						int comm_inner = Integer.parseInt(scan.nextLine());
+						String comm_inner = scan.nextLine();
 
-						if (comm_inner == 1) {
+						if (comm_inner.equals("1")) {
 							inner_inner: while (true) {
 								// TODO 데이터검색
 								System.out.println("1. 객체 번호 최근 기록  | 2. 객체 번호 전체 데이터 | "
 										+ "3. 연령별 평균 데이터 조회 | 4. 성별 평균 데이터 조회 | 5. 이전으로");
 								System.out.print(">>>");
-								int comm_inner_spider = Integer.parseInt(scan.nextLine());
-								if (comm_inner_spider == 1) {
-									// 객체별 세부 데이터 조회
+								String comm_inner_spider = scan.nextLine();
+								if (comm_inner_spider.equals("1")) {
+									// 객체별 최근 기록
 									System.out.println("객체 번호를 입력해주세요");
 									System.out.print(">>>");
 									String spiderName = scan.nextLine();
-									dateService.spiderDataSearch(spiderName);
+									dateService.lastData(spiderName);
 
-								} else if (comm_inner_spider == 2) {
+								} else if (comm_inner_spider.equals("2")) {
 									// 객체별 세부 데이터 조회
 									System.out.println("객체 번호를 입력해주세요");
 									System.out.print(">>>");
 									String spiderName = scan.nextLine();
 									dateService.choiceDate(spiderName);
 
-								} else if (comm_inner_spider == 3) {
+								} else if (comm_inner_spider.equals("3")) {
 									// 연령별 평균 데이터 조회
-									if (dateService.age() != null) {
-										System.out.println(dateService.age());
-									} else {
-										System.out.println("입력하신 객체는 존재하지 않습니다");
-									}
+									dateService.age();
 
-								} else if (comm_inner_spider == 4) {
+								} else if (comm_inner_spider.equals("4")) {
 									// 성별 평균 데이터 조회
-									if (dateService.sex() != null) {
-										System.out.println(dateService.sex());
-									} else {
-										System.out.println("입력하신 객체는 존재하지 않습니다");
-									}
-								} else if (comm_inner_spider == 5) {
+									dateService.sex();
+
+								} else if (comm_inner_spider.equals("5")) {
 									// 이전으로
+
 									continue inner;
 
 								} else {
+									System.out.println("다시입력해주세요");
 									continue inner_inner;
 								}
 							}
-						} else if (comm_inner == 2) {
+						} else if (comm_inner.equals("2")) {
 							// TODO 데이터 추가
 							System.out.println("1. 객체 추가 | 2. 데이터 추가");
 							System.out.print(">>>");
-							int add = Integer.parseInt(scan.nextLine());
+							String add = scan.nextLine();
 
-							if (add == 1) {
+							if (add.equals("1")) {
 								data: while (true) {
 									SpiderMainVO spiderMain = new SpiderMainVO();
 									System.out.print("객체 번호: ");
@@ -136,10 +126,8 @@ public class Main {
 										long timeInMilliSeconds = date.getTime();
 										java.sql.Date sqlDate = new java.sql.Date(timeInMilliSeconds);
 
-										System.out.print("관리자 이름: ");
-										String responsibilty = scan.nextLine();
-
-										spiderMain = new SpiderMainVO(number, name, place, sqlDate, responsibilty);
+										spiderMain = new SpiderMainVO(number, name, place, sqlDate,
+												login.getMemerName());
 										mainService.mainAdd(spiderMain);
 
 									} catch (ParseException e) {
@@ -148,12 +136,24 @@ public class Main {
 									break;
 								}
 
-							} else if (add == 2) {
+							} else if (add.equals("2")) {
 								System.out.print("객체 번호: ");
 								String number = scan.nextLine();
 
 								System.out.print("기록 날짜: ");
 								String recordDate = scan.nextLine();
+								
+								System.out.print("성별: ");
+								String sex = scan.nextLine();
+
+								System.out.print("수행항목: ");
+								String fulfill = scan.nextLine();
+
+								System.out.print("기타내용: ");
+								String etc = scan.nextLine();
+								
+								System.out.print("성장 단계: ");
+								String levele = scan.nextLine();
 
 								SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
 								Date date;
@@ -175,20 +175,8 @@ public class Main {
 									System.out.print("나이: ");
 									int age = scan.nextInt();
 
-									System.out.println("성장 단계: ");
-									String level = scan.nextLine();
-
-									System.out.print("성별: ");
-									String sex = scan.nextLine();
-
-									System.out.print("수행항목: ");
-									String fulfill = scan.nextLine();
-
-									System.out.print("기타내용: ");
-									String etc = scan.nextLine();
-
-									SpiderDataVO spiderdata = new SpiderDataVO(number, sqlDate, width, length, weight,
-											age, level, sex, fulfill, etc);
+									SpiderDataVO spiderdata = new SpiderDataVO(number, sqlDate, width, 
+											length, weight, age, levele, sex, fulfill, etc);
 									dateService.addData(spiderdata);
 								} catch (ParseException e) {
 									e.printStackTrace();
@@ -196,11 +184,11 @@ public class Main {
 
 							}
 
-						} else if (comm_inner == 3) {
+						} else if (comm_inner.equals("3")) {
 							// 거미 데이터 출력
 							mainService.search();
 
-						} else if (comm_inner == 4) {
+						} else if (comm_inner.equals("4")) {
 							continue outer;
 						} else {
 							System.out.println("다시 입력해주세요");
@@ -212,7 +200,7 @@ public class Main {
 					System.out.println("없는 아이디 비밀번호입니다.");
 				}
 
-			} else if (comm == 2) {
+			} else if (comm.equals("2")) {
 				// TODO 회원가입
 				MemberVO mem = new MemberVO();
 				String id;
@@ -238,13 +226,13 @@ public class Main {
 					break id;
 				}
 
-			} else if (comm == 3) {
+			} else if (comm.equals("3")) {
 				// 종료
 				break outer;
 
 			} else {
 				// 입력 벗어남
-				System.out.println("1번과 2번만 입력해주세요");
+				System.out.println("다시입력해주세요");
 				continue outer;
 			}
 		}
